@@ -34,9 +34,15 @@ class Categories
      */
     private $categoriesTranslations;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Meals::class, mappedBy="category_id")
+     */
+    private $meals;
+
     public function __construct()
     {
         $this->categoriesTranslations = new ArrayCollection();
+        $this->meals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -92,6 +98,36 @@ class Categories
             // set the owning side to null (unless already changed)
             if ($categoriesTranslation->getCategoriesId() === $this) {
                 $categoriesTranslation->setCategoriesId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Meals>
+     */
+    public function getMeals(): Collection
+    {
+        return $this->meals;
+    }
+
+    public function addMeal(Meals $meal): self
+    {
+        if (!$this->meals->contains($meal)) {
+            $this->meals[] = $meal;
+            $meal->setCategoryId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMeal(Meals $meal): self
+    {
+        if ($this->meals->removeElement($meal)) {
+            // set the owning side to null (unless already changed)
+            if ($meal->getCategoryId() === $this) {
+                $meal->setCategoryId(null);
             }
         }
 
