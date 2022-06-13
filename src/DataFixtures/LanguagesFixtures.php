@@ -14,7 +14,13 @@ use Doctrine\Persistence\ObjectManager;
  * LanguagesFixtures is a fixture class for languages table
  */
 class LanguagesFixtures extends Fixture
-{
+{    
+    /**
+     * Loads fixtures for languages table
+     *
+     * @param  ObjectManager $manager
+     * @return void
+     */
     public function load(ObjectManager $manager): void
     {
         /**
