@@ -15,7 +15,7 @@ use Doctrine\Persistence\ObjectManager;
  */
 class CategoriesTranslationsFixtures extends Fixture
 {
-    private $em;
+    private EntityManagerInterface $em;
     
     /**
      * __construct
