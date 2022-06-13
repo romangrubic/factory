@@ -13,7 +13,7 @@ use Doctrine\Persistence\ObjectManager;
 /**
  * LanguagesFixtures is a fixture class for languages table
  */
-class LanguagesFixtures extends Fixture
+class AppLanguagesFixtures extends Fixture
 {    
     /**
      * Loads fixtures for languages table
