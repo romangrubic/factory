@@ -29,9 +29,15 @@ class Tags
      */
     private $tagsTranslations;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Meals::class, mappedBy="tags")
+     */
+    private $meals;
+
     public function __construct()
     {
         $this->tagsTranslations = new ArrayCollection();
+        $this->meals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -76,6 +82,33 @@ class Tags
             if ($tagsTranslation->getTagsId() === $this) {
                 $tagsTranslation->setTagsId(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Meals>
+     */
+    public function getMeals(): Collection
+    {
+        return $this->meals;
+    }
+
+    public function addMeal(Meals $meal): self
+    {
+        if (!$this->meals->contains($meal)) {
+            $this->meals[] = $meal;
+            $meal->addTag($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMeal(Meals $meal): self
+    {
+        if ($this->meals->removeElement($meal)) {
+            $meal->removeTag($this);
         }
 
         return $this;

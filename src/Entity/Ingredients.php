@@ -34,9 +34,15 @@ class Ingredients
      */
     private $ingredientsTranslations;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Meals::class, mappedBy="ingredients")
+     */
+    private $meals;
+
     public function __construct()
     {
         $this->ingredientsTranslations = new ArrayCollection();
+        $this->meals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -93,6 +99,33 @@ class Ingredients
             if ($ingredientsTranslation->getIngredients() === $this) {
                 $ingredientsTranslation->setIngredients(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Meals>
+     */
+    public function getMeals(): Collection
+    {
+        return $this->meals;
+    }
+
+    public function addMeal(Meals $meal): self
+    {
+        if (!$this->meals->contains($meal)) {
+            $this->meals[] = $meal;
+            $meal->addIngredient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMeal(Meals $meal): self
+    {
+        if ($this->meals->removeElement($meal)) {
+            $meal->removeIngredient($this);
         }
 
         return $this;

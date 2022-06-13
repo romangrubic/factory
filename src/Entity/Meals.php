@@ -50,9 +50,21 @@ class Meals
      */
     private $mealsTranslations;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Tags::class, inversedBy="meals")
+     */
+    private $tags;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Ingredients::class, inversedBy="meals")
+     */
+    private $ingredients;
+
     public function __construct()
     {
         $this->mealsTranslations = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+        $this->ingredients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -146,6 +158,54 @@ class Meals
                 $mealsTranslation->setMeals(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tags>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tags $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags[] = $tag;
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tags $tag): self
+    {
+        $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ingredients>
+     */
+    public function getIngredients(): Collection
+    {
+        return $this->ingredients;
+    }
+
+    public function addIngredient(Ingredients $ingredient): self
+    {
+        if (!$this->ingredients->contains($ingredient)) {
+            $this->ingredients[] = $ingredient;
+        }
+
+        return $this;
+    }
+
+    public function removeIngredient(Ingredients $ingredient): self
+    {
+        $this->ingredients->removeElement($ingredient);
 
         return $this;
     }
