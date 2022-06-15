@@ -2,6 +2,8 @@
 
 namespace App\Requests;
 
+use App\Entity\Languages;
+use App\Repository\LanguagesRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -9,14 +11,25 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class MealsRequest
 {
     private $validator;
+    private $repo;
 
-    public function __construct(ValidatorInterface $validator)
+    public function __construct(ValidatorInterface $validator, LanguagesRepository $repo)
     {
         $this->validator = $validator;
+        $this->repo = $repo;
     }
 
     public function validate(Request $request)
     {
+        /**
+         * Allowed only codes that exist in languages table
+         */
+        $languages = $this->repo->findAll();
+        $codeRegex = '';
+        foreach ($languages as $language) {
+            $codeRegex .= '|'.$language->getCode();
+        }
+
         $lang = $request->query->get('lang');
         $with = $request->query->get('with');
         $category = $request->query->get('category');
@@ -38,7 +51,9 @@ class MealsRequest
 
         $constraints = new Assert\Collection([
             'lang' => [
-                new Assert\Length(['min' => 2]),
+                new Assert\Regex([
+                    'pattern' => '/^('. $codeArray . ')$/'
+                ]),
                 new Assert\NotBlank
             ],
             'with' => [
