@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\MealsRepository;
 use App\Requests\MealsRequest;
+use App\Services\Format\Item;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,57 +15,50 @@ class IndexController extends AbstractController
 {
     private $mealsRequest;
     private $repo;
+    private $paginator;
+    private $item;
 
-    public function __construct(MealsRequest $mealsRequest, MealsRepository $repo)
+    public function __construct(MealsRequest $mealsRequest, MealsRepository $repo, PaginatorInterface $paginator, Item $item)
     {
         $this->mealsRequest = $mealsRequest;
         $this->repo = $repo;
+        $this->paginator = $paginator;
+        $this->item = $item;
     }
 
     /**
      * @Route("/", name="app_index")
      */
-    public function index(Request $request, PaginatorInterface $paginator): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        /**
+         * Validate parameters
+         */
         $parameters = $this->mealsRequest->validate($request);
 
+        /**
+         * Get meals data
+         */
         $data = $this->repo->getMeals($parameters);
 
         /**
-         * Pagination
+         * Paginate data
          */
-        $pagination = $paginator->paginate(
+        $pagination = $this->paginator->paginate(
             $data,
             (int) $parameters['page'],
             (int) $parameters['per_page']
         );
 
-        dd($pagination->getItems());
-
+        /**
+         * Format meals
+         */
+        $formattedMeals = $this->item->toArray($pagination->getItems(), $parameters);
+// dd($formattedMeals);
         // $errors = $request->validate();
 
-        // dd($errors);
 
-        // $meals = $em->getRepository(Meals::class)->getMeals();
-
-        // dd($tags[0]->getTagsTranslations()[0]->getLocale());
-        // dd($meals);
-
-        // $trans = [];
-
-        // foreach ($meals as $tag) {
-        //     $tagsTranslations = $tag->getTagsTranslations();
-
-        //     foreach ($tagsTranslations as $translated) {
-        //         $locale = $translated->getLocale();
-        //         if ($locale = 'hr') {
-        //             $trans[] = $translated;
-        //         }
-        //     }
-        // }
-
-        // dd($trans);
-
-        return $this->json($pagination);
+        return $this->json($formattedMeals);
     }
+
 }
