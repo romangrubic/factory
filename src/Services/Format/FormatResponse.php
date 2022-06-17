@@ -6,7 +6,8 @@
 
 namespace App\Services\Format;
 
-use App\Services\Format\FormatData;
+use App\Services\Format\{FormatData,
+    FormatMeta};
 
 /**
  * FormatResponse is a format service class for formatting data
@@ -14,6 +15,7 @@ use App\Services\Format\FormatData;
 class FormatResponse
 {
     private FormatData $formatData;
+    private FormatMeta $formatMeta;
     
     /**
      * __construct
@@ -21,15 +23,17 @@ class FormatResponse
      * @param  FormatData $formatData
      * @return void
      */
-    public function __construct(FormatData $formatData )
+    public function __construct(FormatData $formatData,
+                                FormatMeta $formatMeta )
     {
-        $this->formformatDataatItem = $formatData;
+        $this->formatData = $formatData;
+        $this->formatMeta = $formatMeta;
     }
     
     public function formatResponse($parameters, $pagination)
     {
         return [
-            'meta' => 'meta',
+            'meta' => $this->formatMeta->toArray($pagination, $parameters),
             'data' => $this->formatData->toArray($pagination->getItems(), $parameters),
             'links' => 'links'
         ];
