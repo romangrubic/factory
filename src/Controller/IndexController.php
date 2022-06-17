@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Repository\MealsRepository;
 use App\Requests\MealsRequest;
-use App\Services\Format\Item;
+use App\Services\Format\FormatItem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +18,7 @@ class IndexController extends AbstractController
     private $paginator;
     private $item;
 
-    public function __construct(MealsRequest $mealsRequest, MealsRepository $repo, PaginatorInterface $paginator, Item $item)
+    public function __construct(MealsRequest $mealsRequest, MealsRepository $repo, PaginatorInterface $paginator, FormatItem $item)
     {
         $this->mealsRequest = $mealsRequest;
         $this->repo = $repo;

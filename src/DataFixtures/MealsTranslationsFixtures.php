@@ -46,7 +46,8 @@ class MealsTranslationsFixtures extends Fixture
                 $mealTranslation = new MealsTranslations();
                 $mealTranslation->setMeals($meal);
                 $mealTranslation->setLocale($lang->getCode());
-                $mealTranslation->setTitle('Lang :' . $lang->getCode() . ' - MealId:' . $meal->getId() . ' - Example');
+                $mealTranslation->setTitle('Lang :' . $lang->getCode() . ' - MealId:' . $meal->getId() . ' - Title');
+                $mealTranslation->setDescription('Lang :' . $lang->getCode() . ' - MealId:' . $meal->getId() . ' - Description');
 
                 $manager->persist($mealTranslation);
             }

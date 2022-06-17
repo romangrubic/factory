@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This file contains Item class for formatting meals data
+ * This file contains FormatItem class for formatting meals data
  */
 
 namespace App\Services\Format;
 
 /**
- * Item class is a service class for formatting meals data into desired format
+ * FormatItem class is a service class for formatting meals data into desired format
  * Contains one main method toArray() and three helper methods for category, tags and ingredients data
  */
-class Item
+class FormatItem
 {    
     /**
      * Main method
@@ -28,6 +28,7 @@ class Item
             $mealData = [
                 'id' => $meal->getId(),
                 'title' => '',
+                'description' => '',
                 'category' => $this->category($meal, $parameters)
             ];
 
@@ -37,7 +38,7 @@ class Item
             foreach ($meal->getMealsTranslations() as $mt) {
                 if ($parameters['lang'] == $mt->getLocale()) {
                     $mealData['title'] = $mt->getTitle();
-                // $meal->setDescription($mt->getDescription());
+                    $mealData['description'] = $mt->getDescription();
                 }
             }
 
