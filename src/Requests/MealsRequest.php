@@ -22,7 +22,7 @@ class MealsRequest
     public function validate(Request $request)
     {
         /**
-         * Allowed only codes that exist in languages table
+         * Allow only codes that exist in languages table
          */
         $languages = $this->repo->findAll();
         $codeRegex = '';
@@ -52,7 +52,7 @@ class MealsRequest
         $constraints = new Assert\Collection([
             'lang' => [
                 new Assert\Regex([
-                    'pattern' => '/^('. $codeArray . ')$/'
+                    'pattern' => '/^('. $codeRegex . ')$/'
                 ]),
                 new Assert\NotBlank
             ],
