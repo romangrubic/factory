@@ -74,7 +74,7 @@ class IndexController extends AbstractController
         /**
          * Format response data
          */
-        $formattedMeals = $this->formatResponse->formatResponse($parameters, $pagination);
+        $formattedMeals = $this->formatResponse->formatResponse($parameters, $pagination, $request);
 
         /**
          * Return json data to User

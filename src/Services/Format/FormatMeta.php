@@ -23,8 +23,8 @@ class FormatMeta
         return [
             'currentPage' => $pagination->getCurrentPageNumber(),
             'totalItems' => $pagination->getTotalItemCount(),
-            'itemsPerPage' => $parameters['per_page'],
-            'totalPages' => ($pagination->getTotalItemCount()/$parameters['per_page'])
+            'itemsPerPage' => (int) $parameters['per_page'],
+            'totalPages' => ceil($pagination->getTotalItemCount()/$parameters['per_page'])
         ];
     }
 }
