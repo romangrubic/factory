@@ -1,33 +1,56 @@
 <?php
 
+/**
+ * This file contains IndexController class (main controller class)
+ */
+
 namespace App\Controller;
 
-use App\Repository\MealsRepository;
-use App\Requests\MealsRequest;
-use App\Services\Format\FormatItem;
+use App\{Repository\MealsRepository,
+    Requests\MealsRequest};
+use App\Services\Format\FormatResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\{JsonResponse,
+    Request};
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 
+/**
+ * IndexController class is a controller class for route "/api/meals"
+ */
 class IndexController extends AbstractController
-{
-    private $mealsRequest;
-    private $repo;
-    private $paginator;
-    private $item;
-
-    public function __construct(MealsRequest $mealsRequest, MealsRepository $repo, PaginatorInterface $paginator, FormatItem $item)
+{    
+    /**
+     * Setting properties
+     *
+     */
+    private MealsRequest $mealsRequest;
+    private MealsRepository $repo;
+    private PaginatorInterface $paginator;
+    private FormatResponse $formatResponse;
+    
+    /**
+     * __construct
+     *
+     * @param  MealsRequest $mealsRequest
+     * @param  MealsRepository $repo
+     * @param  PaginatorInterface $paginator
+     * @param  FormatResponse $formatResponse
+     * @return void
+     */
+    public function __construct(MealsRequest $mealsRequest, 
+                                MealsRepository $repo, 
+                                PaginatorInterface $paginator, 
+                                FormatResponse $formatResponse)
     {
         $this->mealsRequest = $mealsRequest;
         $this->repo = $repo;
         $this->paginator = $paginator;
-        $this->item = $item;
+        $this->formatResponse = $formatResponse;
     }
 
     /**
-     * @Route("/", name="app_index")
+     * @Route("/api/meals", name="app_index")
      */
     public function index(Request $request): JsonResponse
     {
@@ -44,21 +67,18 @@ class IndexController extends AbstractController
         /**
          * Paginate data
          */
-        $pagination = $this->paginator->paginate(
-            $data,
-            (int) $parameters['page'],
-            (int) $parameters['per_page']
-        );
+        $pagination = $this->paginator->paginate($data, 
+                                                (int) $parameters['page'], 
+                                                (int) $parameters['per_page']);
 
         /**
-         * Format meals
+         * Format response data
          */
-        $formattedMeals = $this->item->toArray($pagination->getItems(), $parameters);
-// dd($formattedMeals);
-        // $errors = $request->validate();
+        $formattedMeals = $this->formatResponse->formatResponse($parameters, $pagination);
 
-
+        /**
+         * Return json data to User
+         */
         return $this->json($formattedMeals);
     }
-
 }
