@@ -1,16 +1,16 @@
 <?php
 
 /**
- * This file contains FormatItem class for formatting meals data
+ * This file contains FormatData class for formatting meals data
  */
 
 namespace App\Services\Format;
 
 /**
- * FormatItem class is a service class for formatting meals data into desired format
+ * FormatData class is a service class for formatting meals data into desired format.
  * Contains one main method toArray() and three helper methods for category, tags and ingredients data
  */
-class FormatItem
+class FormatData
 {    
     /**
      * Main method
