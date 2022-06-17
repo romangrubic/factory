@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 class IndexController extends AbstractController
 {
@@ -24,12 +24,22 @@ class IndexController extends AbstractController
     /**
      * @Route("/", name="app_index")
      */
-    public function index(Request $request, SerializerInterface $serializer): JsonResponse
+    public function index(Request $request, PaginatorInterface $paginator): JsonResponse
     {
         $parameters = $this->mealsRequest->validate($request);
-        
+
         $data = $this->repo->getMeals($parameters);
-        dd($data);
+
+        /**
+         * Pagination
+         */
+        $pagination = $paginator->paginate(
+            $data,
+            (int) $parameters['page'],
+            (int) $parameters['per_page']
+        );
+
+        dd($pagination->getItems());
 
         // $errors = $request->validate();
 
@@ -55,6 +65,6 @@ class IndexController extends AbstractController
 
         // dd($trans);
 
-        return $this->json($data);
+        return $this->json($pagination);
     }
 }
