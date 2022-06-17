@@ -6,9 +6,14 @@
 
 namespace App\Services\Format;
 
+/**
+ * Item class is a service class for formatting meals data into desired format
+ * Contains one main method toArray() and three helper methods for category, tags and ingredients data
+ */
 class Item
 {    
     /**
+     * Main method
      * Formats meals into an array with desired data format
      *
      * @param  array $data
@@ -46,6 +51,16 @@ class Item
                 }
             }
 
+            /**
+             * If 'with' parameter has 'ingredients', show tags data
+             */
+            if (str_contains($parameters['with'], 'ingredients')) {
+                $ingredientsArray = $this->ingredients($meal, $parameters);
+                if ($ingredientsArray) {
+                    $mealData['ingredients'] = $ingredientsArray;
+                }
+            }
+
             $mealsArray[] = $mealData;
         }
         
@@ -53,13 +68,19 @@ class Item
     }
     
     /**
+     * 
+     * Helper methods for category, tags and ingredients data
+     * 
+     */
+
+    /**
      * Sets category field in meal
      *
      * @param  object $meal
      * @param  array $parameters
      * @return mixed
      */
-    public function category(object $meal, array $parameters)
+    private function category(object $meal, array $parameters)
     {  
         /**
          * If 'with' parameter has 'category' then show all data, else just id or null
@@ -68,13 +89,13 @@ class Item
             if ($meal->getCategoryId() != null) {
                 foreach ($meal->getCategoryId()->getCategoriesTranslations() as $ct) {
                     if ($parameters['lang'] == $ct->getLocale()) {
-                        $tran = $ct->getTitle();
+                        $translation = $ct->getTitle();
                     };
                 }
     
                 return [
                     'id' => $meal->getCategoryId()->getId(),
-                    'title' => $tran,
+                    'title' => $translation,
                     'slug' => $meal->getCategoryId()->getSlug()
                 ];
             }
@@ -95,24 +116,52 @@ class Item
      * @param  array $parameters
      * @return array
      */
-    public function tags(object $meal, array $parameters): array
+    private function tags(object $meal, array $parameters): array
     {
         $tagArray = [];
 
         foreach ($meal->getTags() as $item) {
             foreach ($item->getTagsTranslations() as $tt) {
                 if ($parameters['lang'] == $tt->getLocale()) {
-                    $tran = $tt->getTitle();
+                    $translation = $tt->getTitle();
                 };
             }
             
             $tagArray[] = [
                 'id' => $item->getId(),
-                'title' => $tran,
+                'title' => $translation,
                 'slug' => $item->getSlug()
             ];
         }
 
         return $tagArray;
+    }
+
+    /**
+     * Returns tag data
+     *
+     * @param  object $meal
+     * @param  array $parameters
+     * @return array
+     */
+    private function ingredients(object $meal, array $parameters): array
+    {
+        $ingredientArray = [];
+
+        foreach ($meal->getIngredients() as $item) {
+            foreach ($item->getIngredientsTranslations() as $it) {
+                if ($parameters['lang'] == $it->getLocale()) {
+                    $translation = $it->getTitle();
+                };
+            }
+            
+            $ingredientArray[] = [
+                'id' => $item->getId(),
+                'title' => $translation,
+                'slug' => $item->getSlug()
+            ];
+        }
+
+        return $ingredientArray;
     }
 }
