@@ -10,6 +10,7 @@ use App\Entity\IngredientsTranslations;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 
 /**
  * IngredientsTranslationsFixtures is a fixture class for ingredients_translations table
@@ -37,6 +38,11 @@ class IngredientsTranslationsFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
+        /**
+         * Faker class
+         */
+        $faker = Factory::create();
+
         $languageArray = $this->em->getRepository("App\Entity\Languages")->findAll();
         $ingredientsArray = $this->em->getRepository("App\Entity\Ingredients")->findAll();
 
@@ -48,7 +54,7 @@ class IngredientsTranslationsFixtures extends Fixture
                 $ingredientTranslation = new IngredientsTranslations();
                 $ingredientTranslation->setIngredients($ingredient);
                 $ingredientTranslation->setLocale($lang->getCode());
-                $ingredientTranslation->setTitle('Lang :' . $lang->getCode() . ' - IngredientId:' . $ingredient->getId() . ' - Example');
+                $ingredientTranslation->setTitle('Lang :' . $lang->getCode() . ' - IngredientId:' . $ingredient->getId() . ' - ' . $faker->text(50));
 
                 $manager->persist($ingredientTranslation);
             }

@@ -9,6 +9,7 @@ use App\Entity\CategoriesTranslations;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 
 /**
  * CategoriesTranslationsFixtures is a fixture class for categories_translations table
@@ -36,6 +37,11 @@ class CategoriesTranslationsFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
+        /**
+         * Faker class
+         */
+        $faker = Factory::create();
+
         $languageArray = $this->em->getRepository("App\Entity\Languages")->findAll();
         $categoryArray = $this->em->getRepository("App\Entity\Categories")->findAll();
 
@@ -47,7 +53,7 @@ class CategoriesTranslationsFixtures extends Fixture
                 $categoriesTranslation = new CategoriesTranslations();
                 $categoriesTranslation->setCategoriesId($category);
                 $categoriesTranslation->setLocale($lang->getCode());
-                $categoriesTranslation->setTitle('Lang :' . $lang->getCode() . ' - CategoryId:' . $category->getId() . ' - Example');
+                $categoriesTranslation->setTitle('Lang :' . $lang->getCode() . ' - CategoryId:' . $category->getId() . ' - ' . $faker->text(50));
 
                 $manager->persist($categoriesTranslation);
             }

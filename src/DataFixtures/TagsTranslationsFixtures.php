@@ -10,6 +10,7 @@ use App\Entity\TagsTranslations;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\{ORM\EntityManagerInterface,
     Persistence\ObjectManager};
+use Faker\Factory;
 
 /**
  * TagsTranslationsFixtures is a fixture class for tags_translations table
@@ -37,6 +38,11 @@ class TagsTranslationsFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
+        /**
+         * Faker class
+         */
+        $faker = Factory::create();
+
         $languageArray = $this->em->getRepository("App\Entity\Languages")->findAll();
         $tagsArray = $this->em->getRepository("App\Entity\Tags")->findAll();
 
@@ -48,7 +54,7 @@ class TagsTranslationsFixtures extends Fixture
                 $tagsTranslation = new TagsTranslations();
                 $tagsTranslation->setTagsId($tag);
                 $tagsTranslation->setLocale($lang->getCode());
-                $tagsTranslation->setTitle('Lang :' . $lang->getCode() . ' - TagId:' . $tag->getId() . ' - Example');
+                $tagsTranslation->setTitle('Lang :' . $lang->getCode() . ' - TagId:' . $tag->getId() . ' - ' . $faker->text(50));
 
                 $manager->persist($tagsTranslation);
             }

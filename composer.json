@@ -11,6 +11,7 @@
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.12",
+        "fakerphp/faker": "^1.19",
         "gedmo/doctrine-extensions": "^3.7",
         "knplabs/knp-paginator-bundle": "^5.8",
         "nesbot/carbon": "^2.58",

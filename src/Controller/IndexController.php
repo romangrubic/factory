@@ -29,6 +29,7 @@ class IndexController extends AbstractController
     private MealsRepository $repo;
     private PaginatorInterface $paginator;
     private FormatResponse $formatResponse;
+    private EntityManagerInterface $em;
     
     /**
      * __construct
@@ -42,18 +43,20 @@ class IndexController extends AbstractController
     public function __construct(MealsRequest $mealsRequest, 
                                 MealsRepository $repo, 
                                 PaginatorInterface $paginator, 
-                                FormatResponse $formatResponse)
+                                FormatResponse $formatResponse,
+                                EntityManagerInterface $em)
     {
         $this->mealsRequest = $mealsRequest;
         $this->repo = $repo;
         $this->paginator = $paginator;
         $this->formatResponse = $formatResponse;
+        $this->em = $em;
     }
 
     /**
      * @Route("/api/meals", name="app_index")
      */
-    public function index(Request $request, EntityManagerInterface $em): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         /**
          * Validate parameters
@@ -69,13 +72,13 @@ class IndexController extends AbstractController
          * Paginate data ($data returns query not results so I need to put diff_time logic here)
          */
         if(isset($parameters['diff_time'])) {
-            $em->getFilters()->disable('softdeleteable');
+            $this->em->getFilters()->disable('softdeleteable');
 
             $pagination = $this->paginator->paginate($data, 
                                                 (int) $parameters['page'], 
                                                 (int) $parameters['per_page']);
 
-            $em->getFilters()->enable('softdeleteable');
+            $this->em->getFilters()->enable('softdeleteable');
 
         } else {
             $pagination = $this->paginator->paginate($data, 
@@ -92,5 +95,7 @@ class IndexController extends AbstractController
          * Return json data to User
          */
         return $this->json($formattedMeals);
+
+        // return $formattedMeals;
     }
 }
