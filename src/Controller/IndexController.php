@@ -9,6 +9,7 @@ namespace App\Controller;
 use App\{Repository\MealsRepository,
     Requests\MealsRequest};
 use App\Services\Format\FormatResponse;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{JsonResponse,
     Request};
@@ -52,7 +53,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/api/meals", name="app_index")
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, EntityManagerInterface $em): JsonResponse
     {
         /**
          * Validate parameters
@@ -60,9 +61,17 @@ class IndexController extends AbstractController
         $parameters = $this->mealsRequest->validate($request);
 
         /**
-         * Get meals data
+         * Get meals data depending if 'diff_time' is in parameters
          */
-        $data = $this->repo->getMeals($parameters);
+        if(isset($parameters['diff_time'])) {
+            $em->getFilters()->disable('softdeleteable');
+
+            $data = $this->repo->getMeals($parameters);
+            
+            $em->getFilters()->enable('softdeleteable');
+        } else {
+            $data = $this->repo->getMeals($parameters);
+        }
 
         /**
          * Paginate data

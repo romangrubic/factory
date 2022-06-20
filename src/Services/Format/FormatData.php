@@ -50,7 +50,7 @@ class FormatData
                 $mealsArray[] = $mealData;
                 continue;
             }
-            
+
             /**
              * If 'with' parameter has 'tags', show tags data
              */
@@ -148,7 +148,7 @@ class FormatData
     }
 
     /**
-     * Returns tag data
+     * Returns ingredient data
      *
      * @param  object $meal
      * @param  array $parameters
