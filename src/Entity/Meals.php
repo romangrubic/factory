@@ -6,9 +6,12 @@ use App\Repository\MealsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+
 
 /**
  * @ORM\Entity(repositoryClass=MealsRepository::class)
+ * @Gedmo\SoftDeleteable(fieldName="deleted_at", timeAware=false, hardDelete=false)
  */
 class Meals
 {
@@ -46,7 +49,8 @@ class Meals
     private $updated_at;
 
     /**
-     * @ORM\OneToMany(targetEntity=MealsTranslations::class, mappedBy="meals")
+     * @ORM\OneToMany(targetEntity="MealsTranslations", mappedBy="meals", fetch="EAGER")
+     * @ORM\JoinColumn(name="meals", referencedColumnName="id")
      */
     private $mealsTranslations;
 
@@ -59,6 +63,11 @@ class Meals
      * @ORM\ManyToMany(targetEntity=Ingredients::class, inversedBy="meals")
      */
     private $ingredients;
+
+    /**
+     * @ORM\Column(name="deleted_at", type="datetime", nullable=true)
+     */
+    private $deleted_at;
 
     public function __construct()
     {
@@ -206,6 +215,18 @@ class Meals
     public function removeIngredient(Ingredients $ingredient): self
     {
         $this->ingredients->removeElement($ingredient);
+
+        return $this;
+    }
+
+    public function getDeletedAt(): ?\DateTimeInterface
+    {
+        return $this->deleted_at;
+    }
+
+    public function setDeletedAt(?\DateTimeInterface $deleted_at): self
+    {
+        $this->deleted_at = $deleted_at;
 
         return $this;
     }

@@ -26,6 +26,7 @@ class Tags
 
     /**
      * @ORM\OneToMany(targetEntity=TagsTranslations::class, mappedBy="tags_id", fetch="EAGER")
+     * @ORM\JoinColumn(name="tags_id", referencedColumnName="id")
      */
     private $tagsTranslations;
 

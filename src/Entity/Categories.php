@@ -30,7 +30,8 @@ class Categories
     private $slug;
 
     /**
-     * @ORM\OneToMany(targetEntity=CategoriesTranslations::class, mappedBy="categories_id")
+     * @ORM\OneToMany(targetEntity=CategoriesTranslations::class, mappedBy="categories_id", fetch="EAGER")
+     * @ORM\JoinColumn(name="categories_id", referencedColumnName="id")
      */
     private $categoriesTranslations;
 

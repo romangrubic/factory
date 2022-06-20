@@ -30,7 +30,8 @@ class Ingredients
     private $slug;
 
     /**
-     * @ORM\OneToMany(targetEntity=IngredientsTranslations::class, mappedBy="ingredients")
+     * @ORM\OneToMany(targetEntity=IngredientsTranslations::class, mappedBy="ingredients", fetch="EAGER")
+     * @ORM\JoinColumn(name="ingredients", referencedColumnName="id")
      */
     private $ingredientsTranslations;
 

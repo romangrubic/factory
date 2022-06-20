@@ -56,7 +56,7 @@ class IndexController extends AbstractController
     /**
      * @Route("/api/meals", name="app_index")
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         /**
          * Validate parameters
@@ -67,6 +67,8 @@ class IndexController extends AbstractController
          * Get meals data query
          */
         $data = $this->repo->getMeals($parameters);
+
+        // $data = $this->repo->findAll();
 
         /**
          * Paginate data ($data returns query not results so I need to put diff_time logic here)

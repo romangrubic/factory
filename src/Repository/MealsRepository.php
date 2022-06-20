@@ -89,11 +89,14 @@ class MealsRepository extends ServiceEntityRepository
         //     $tagArray = explode(',', $parameters['tags']);
         //     $count = count($tagArray);
             
-        //     $q->expr()->exists('SELECT 1
+        //     $q->leftJoin('m.tags', 't')
+        //             ->addSelect('t');
+
+        //     $q->andWhere($q->expr()->exists('SELECT 1
         //                         FROM meals_tags mt
         //                         WHERE m.id = mt.meals AND
         //                             mt.tags IN (14)
-        //                             HAVING COUNT(1) = 1');
+        //                             HAVING COUNT(1) = 1'));
         // }
 
         /**
@@ -112,29 +115,4 @@ class MealsRepository extends ServiceEntityRepository
 
         return $query;
     }
-
-//    /**
-//     * @return Meals[] Returns an array of Meals objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('m.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Meals
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }
