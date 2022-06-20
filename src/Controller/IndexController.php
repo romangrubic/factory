@@ -71,22 +71,11 @@ class IndexController extends AbstractController
         // $data = $this->repo->findAll();
 
         /**
-         * Paginate data ($data returns query not results so I need to put diff_time logic here)
+         * Paginate data query and get results
          */
-        if(isset($parameters['diff_time'])) {
-            $this->em->getFilters()->disable('softdeleteable');
-
-            $pagination = $this->paginator->paginate($data, 
-                                                (int) $parameters['page'], 
-                                                (int) $parameters['per_page']);
-
-            $this->em->getFilters()->enable('softdeleteable');
-
-        } else {
-            $pagination = $this->paginator->paginate($data, 
-                                                (int) $parameters['page'], 
-                                                (int) $parameters['per_page']);
-        }
+        $pagination = $this->paginator->paginate($data, 
+                                            (int) $parameters['page'], 
+                                            (int) $parameters['per_page']);
 
         /**
          * Format response data
@@ -96,8 +85,8 @@ class IndexController extends AbstractController
         /**
          * Return json data to User
          */
-        return $this->json($formattedMeals);
+        // return $this->json($formattedMeals);
 
-        // return $formattedMeals;
+        return $formattedMeals;
     }
 }

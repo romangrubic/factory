@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Meals;
 use Carbon\Carbon;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,9 +18,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MealsRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $em;
+
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $em)
     {
         parent::__construct($registry, Meals::class);
+        $this->em = $em;
     }
 
     public function add(Meals $entity, bool $flush = false): void
@@ -103,10 +107,21 @@ class MealsRepository extends ServiceEntityRepository
          * Diff_time filter
          */
         if (isset($parameters['diff_time'])) {
+            /**
+             * Getting all data, inlcuding soft deleted.
+             * Therefore, disabling the filter
+             */
+            $this->em->getFilters()->disable('softdeleteable');
+
             $timestamp = Carbon::createFromTimestamp($parameters['diff_time']);
 
             $q->andWhere('m.updated_at >= :timestamp')
               ->setParameter('timestamp', $timestamp);
+
+            /**
+             * Enabling the filter after it.
+             */
+            $this->em->getFilters()->enable('softdeleteable');
         }
 
         $query = $q->getQuery();
