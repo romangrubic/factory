@@ -29,6 +29,7 @@ class FormatData
                 'id' => $meal->getId(),
                 'title' => '',
                 'description' => '',
+                'status' => $this->status($meal, $parameters),
                 'category' => $this->category($meal, $parameters)
             ];
 
@@ -82,6 +83,30 @@ class FormatData
      * Helper methods for category, tags and ingredients data
      * 
      */
+
+    /**
+     * Returns status type created|modified|deleted
+     *
+     * @param  object $meal
+     * @param  array $parameters
+     * @return string
+     */
+    private function status(object $meal, array $parameters): string
+    {
+        if (!isset($parameters['diff_time'])) {
+            return 'created';
+        }
+
+        if (!is_null($meal->getDeletedAt())) {
+            return 'deleted';
+        }
+
+        if ($meal->getCreatedAt() != $meal->getUpdatedAt()) {
+            return 'modified';
+        }
+
+        return 'created';
+    }
 
     /**
      * Sets category field in meal
