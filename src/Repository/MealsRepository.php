@@ -3,10 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\Meals;
+use Carbon\Carbon;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\Query\AST\Join;
-use Doctrine\ORM\Query\Expr\Join as ExprJoin;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -46,9 +44,7 @@ class MealsRepository extends ServiceEntityRepository
     {
         // dd($parameters);
         $q = $this->createQueryBuilder('m')
-            ->select('m')
-            ->innerJoin('App\Entity\MealsTranslations', 'mt', 'with', 'mt.meals = m.id')
-            ->andWhere('mt.locale = :locale');
+            ->select('m');
 
         /**
          * With filter
@@ -59,9 +55,6 @@ class MealsRepository extends ServiceEntityRepository
             if (in_array('tags', $with)) {
                 $q->leftJoin('m.tags', 't')
                     ->addSelect('t');
-                    // ->innerJoin('tags_translations', 'tt', 'with', 't.id = tt.tags')
-                    // ->addSelect('tt')
-                    // ->andWhere('tt.locale = :locale');
             }
 
             if (in_array('ingredients', $with)) {
@@ -70,11 +63,10 @@ class MealsRepository extends ServiceEntityRepository
             }
 
             if (in_array('category', $with)) {
-                $q->innerJoin('App\Entity\Categories', 'c', 'with', 'm.category_id = c.id')
+                $q->leftJoin('m.category_id', 'c', 'with', 'm.category_id = c.id')
                     ->addSelect('c');
             }
         }
-
 
         /**
          * Category filter
@@ -82,10 +74,10 @@ class MealsRepository extends ServiceEntityRepository
         if (isset($parameters['category'])) {
             switch ($parameters['category']) {
                 case('NULL'):
-                    $q->andWhere('m.category_id is null');
+                    $q->andWhere('m.category_id IS NULL');
                     break;
                 case('!NULL'):
-                    $q->andWhere('m.category_id is not null');
+                    $q->andWhere('m.category_id IS NOT NULL');
                     break;
                 default:
                     $q->andWhere('m.category_id = '. $parameters['category']);
@@ -93,14 +85,30 @@ class MealsRepository extends ServiceEntityRepository
             }
         }
 
+        // if (isset($parameters['tags'])) {
+        //     $tagArray = explode(',', $parameters['tags']);
+        //     $count = count($tagArray);
+            
+        //     $q->expr()->exists('SELECT 1
+        //                         FROM meals_tags mt
+        //                         WHERE m.id = mt.meals AND
+        //                             mt.tags IN (14)
+        //                             HAVING COUNT(1) = 1');
+        // }
 
-        $query = $q->setParameter('locale', $parameters['lang']);
-                // ->getQuery();
+        /**
+         * Diff_time filter
+         */
+        if (isset($parameters['diff_time'])) {
+            $timestamp = Carbon::createFromTimestamp($parameters['diff_time']);
 
-        // $query = $q->getQuery()->getResult();
+            $q->andWhere('m.updated_at >= :timestamp')
+              ->setParameter('timestamp', $timestamp);
+        }
+
         $query = $q->getQuery();
+        
         // dd($query);
-
 
         return $query;
     }

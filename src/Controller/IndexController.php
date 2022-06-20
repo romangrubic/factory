@@ -61,24 +61,27 @@ class IndexController extends AbstractController
         $parameters = $this->mealsRequest->validate($request);
 
         /**
-         * Get meals data depending if 'diff_time' is in parameters
+         * Get meals data query
+         */
+        $data = $this->repo->getMeals($parameters);
+
+        /**
+         * Paginate data ($data returns query not results so I need to put diff_time logic here)
          */
         if(isset($parameters['diff_time'])) {
             $em->getFilters()->disable('softdeleteable');
 
-            $data = $this->repo->getMeals($parameters);
-            
-            $em->getFilters()->enable('softdeleteable');
-        } else {
-            $data = $this->repo->getMeals($parameters);
-        }
-
-        /**
-         * Paginate data
-         */
-        $pagination = $this->paginator->paginate($data, 
+            $pagination = $this->paginator->paginate($data, 
                                                 (int) $parameters['page'], 
                                                 (int) $parameters['per_page']);
+
+            $em->getFilters()->enable('softdeleteable');
+
+        } else {
+            $pagination = $this->paginator->paginate($data, 
+                                                (int) $parameters['page'], 
+                                                (int) $parameters['per_page']);
+        }
 
         /**
          * Format response data
