@@ -43,6 +43,15 @@ class FormatData
             }
 
             /**
+             * Guard for parameter['with'].
+             * If there is no parameter 'with', stop.
+             */
+            if (!isset($parameters['with'])) {
+                $mealsArray[] = $mealData;
+                continue;
+            }
+            
+            /**
              * If 'with' parameter has 'tags', show tags data
              */
             if (str_contains($parameters['with'], 'tags')) {
@@ -86,7 +95,7 @@ class FormatData
         /**
          * If 'with' parameter has 'category' then show all data, else just id or null
          */
-        if (str_contains($parameters['with'], 'category')) {
+        if (isset($parameters['with']) && str_contains($parameters['with'], 'category')) {
             if ($meal->getCategoryId() != null) {
                 foreach ($meal->getCategoryId()->getCategoriesTranslations() as $ct) {
                     if ($parameters['lang'] == $ct->getLocale()) {
