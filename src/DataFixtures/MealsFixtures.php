@@ -23,7 +23,7 @@ class MealsFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
-        $count = 20;
+        $count = 2000;
 
         for ($i = 1; $i <= $count; $i++) {
             $meal = new Meals();

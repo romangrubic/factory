@@ -2,7 +2,6 @@
 
 namespace App\Requests;
 
-use App\Entity\Languages;
 use App\Repository\LanguagesRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;

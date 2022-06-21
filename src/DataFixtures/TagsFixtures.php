@@ -23,7 +23,7 @@ class TagsFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
-       $count = 100;
+       $count = 50;
 
        for ($i = 1; $i <= $count; $i++) {
             $tags = new Tags();
