@@ -71,12 +71,23 @@ class IndexController extends AbstractController
         // $data = $this->repo->findAll();
 
         /**
-         * Paginate data query and get results
+         * Paginate data query and get results depending on 'diff_time' param
+         * I tried moving 'diff_time' logic to MealsRepository but it didn't work at all so I'm returning it back
          */
-        $pagination = $this->paginator->paginate($data, 
-                                            (int) $parameters['page'], 
-                                            (int) $parameters['per_page']);
+        if (isset($parameters['diff_time'])) {
+            $this->em->getFilters()->disable('softdeleteable');
+        
+            $pagination = $this->paginator->paginate($data, 
+                                                    (int) $parameters['page'], 
+                                                    (int) $parameters['per_page']);
 
+            $this->em->getFilters()->enable('softdeleteable');
+
+        } else {
+            $pagination = $this->paginator->paginate($data, 
+                                                    (int) $parameters['page'], 
+                                                    (int) $parameters['per_page']);
+        }
         /**
          * Format response data
          */
@@ -85,8 +96,6 @@ class IndexController extends AbstractController
         /**
          * Return json data to User
          */
-        // return $this->json($formattedMeals);
-
-        return $formattedMeals;
+        return $this->json($formattedMeals);
     }
 }
