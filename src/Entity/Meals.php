@@ -69,11 +69,17 @@ class Meals
      */
     private $deleted_at;
 
+    /**
+     * @ORM\OneToMany(targetEntity=MealsTags::class, mappedBy="meals")
+     */
+    private $mealsTags;
+
     public function __construct()
     {
         $this->mealsTranslations = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->ingredients = new ArrayCollection();
+        $this->mealsTags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -227,6 +233,36 @@ class Meals
     public function setDeletedAt(?\DateTimeInterface $deleted_at): self
     {
         $this->deleted_at = $deleted_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MealsTags>
+     */
+    public function getMealsTags(): Collection
+    {
+        return $this->mealsTags;
+    }
+
+    public function addMealsTag(MealsTags $mealsTag): self
+    {
+        if (!$this->mealsTags->contains($mealsTag)) {
+            $this->mealsTags[] = $mealsTag;
+            $mealsTag->setMeals($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMealsTag(MealsTags $mealsTag): self
+    {
+        if ($this->mealsTags->removeElement($mealsTag)) {
+            // set the owning side to null (unless already changed)
+            if ($mealsTag->getMeals() === $this) {
+                $mealsTag->setMeals(null);
+            }
+        }
 
         return $this;
     }

@@ -35,10 +35,16 @@ class Tags
      */
     private $meals;
 
+    /**
+     * @ORM\OneToMany(targetEntity=MealsTags::class, mappedBy="tags")
+     */
+    private $mealsTags;
+
     public function __construct()
     {
         $this->tagsTranslations = new ArrayCollection();
         $this->meals = new ArrayCollection();
+        $this->mealsTags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -110,6 +116,36 @@ class Tags
     {
         if ($this->meals->removeElement($meal)) {
             $meal->removeTag($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MealsTags>
+     */
+    public function getMealsTags(): Collection
+    {
+        return $this->mealsTags;
+    }
+
+    public function addMealsTag(MealsTags $mealsTag): self
+    {
+        if (!$this->mealsTags->contains($mealsTag)) {
+            $this->mealsTags[] = $mealsTag;
+            $mealsTag->setTags($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMealsTag(MealsTags $mealsTag): self
+    {
+        if ($this->mealsTags->removeElement($mealsTag)) {
+            // set the owning side to null (unless already changed)
+            if ($mealsTag->getTags() === $this) {
+                $mealsTag->setTags(null);
+            }
         }
 
         return $this;
