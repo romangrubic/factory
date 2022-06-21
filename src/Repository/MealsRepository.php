@@ -116,10 +116,8 @@ class MealsRepository extends ServiceEntityRepository
                                             WHERE m.id = mt.meals 
                                             AND mt.tags IN (:tagsArray)
                                             HAVING COUNT(1) = :count'))
-                  ->setParameters([
-                        'tagsArray' => $tagArray,
-                        'count' => count($tagArray)
-                    ]);
+                  ->setParameter('tagsArray', $tagArray)
+                  ->setParameter('count', count($tagArray));
         }
 
         /**

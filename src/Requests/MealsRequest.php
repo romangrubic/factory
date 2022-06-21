@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * This file contains rules and constraints for validating user input
+ */
+
 namespace App\Requests;
 
 use App\Repository\LanguagesRepository;
@@ -7,10 +11,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * MealsRequest is a request class for route '/api/meals'.
+ */
 class MealsRequest
 {
-    private $validator;
-    private $repo;
+    private ValidatorInterface $validator;
+    private LanguagesRepository $repo;
 
     public function __construct(ValidatorInterface $validator, LanguagesRepository $repo)
     {
@@ -21,7 +28,7 @@ class MealsRequest
     public function validate(Request $request)
     {
         /**
-         * Allow only codes that exist in languages table
+         * Allow only codes that exists in languages table
          */
         $languages = $this->repo->findAll();
         $codeRegex = '';
@@ -36,7 +43,6 @@ class MealsRequest
         $per_page = $request->query->get('per_page');
         $page = $request->query->get('page');
         $diff_time = $request->query->get('diff_time');
-
 
         $input = [
             'lang' => $lang,
@@ -90,10 +96,7 @@ class MealsRequest
 
         ]);
 
-
-
         $errors = $this->validator->validate($input, $constraints);
-        // dd($violations);
 
         if (count($errors) > 0) {
             /*

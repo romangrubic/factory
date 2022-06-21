@@ -68,8 +68,6 @@ class IndexController extends AbstractController
          */
         $data = $this->repo->getMeals($parameters);
 
-        // $data = $this->repo->findAll();
-
         /**
          * Paginate data query and get results depending on 'diff_time' param
          * I tried moving 'diff_time' logic to MealsRepository but it didn't work at all so I'm returning it back
@@ -88,6 +86,7 @@ class IndexController extends AbstractController
                                                     (int) $parameters['page'], 
                                                     (int) $parameters['per_page']);
         }
+        
         /**
          * Format response data
          */
